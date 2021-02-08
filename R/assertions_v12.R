@@ -53,6 +53,39 @@ assert_non_null <- function(x, message = NULL,
 }
 
 #------------------------------------------------
+# x is NA
+#' @noRd
+assert_NA <- function(x, message = NULL,
+                      name = paste(deparse(substitute(x)), collapse = "")) {
+  # default message
+  if (is.null(message)) {
+    message <- "%s must be NA"
+  }
+  
+  assert_non_null(x, message = message)
+  if (!all(is.na(x))) {
+    stop(sprintf(message, name), call. = FALSE)
+  }
+  return(TRUE)
+}
+
+#------------------------------------------------
+# x is not NA
+#' @noRd
+assert_non_NA <- function(x, message = NULL,
+                      name = paste(deparse(substitute(x)), collapse = "")) {
+  # default message
+  if (is.null(message)) {
+    message <- "%s cannot be NA"
+  }
+  
+  if (any(is.na(x))) {
+    stop(sprintf(message, name), call. = FALSE)
+  }
+  return(TRUE)
+}
+
+#------------------------------------------------
 # x is atomic
 #' @noRd
 assert_atomic <- function(x, message = NULL,
