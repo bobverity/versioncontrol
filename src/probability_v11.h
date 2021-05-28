@@ -24,7 +24,7 @@ std::vector<int> rmultinom1(int N, const std::vector<double> &p, double p_sum = 
 double rnorm1(double mean = 0.0, double sd = 1.0);
 
 //------------------------------------------------
-double dmultinom1(const std::vector<int> &x, int x_sum, const std::vector<double> &p, double p_sum) {
+double dmultinom1(const std::vector<int> &x, int x_sum, const std::vector<double> &p, double p_sum);
 
 //------------------------------------------------
 double rnorm1_interval(double mean, double sd, double a, double b);
