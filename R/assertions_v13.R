@@ -62,7 +62,7 @@ assert_NA <- function(x, message = NULL,
     message <- "%s must be NA"
   }
   
-  assert_non_null(x, message = message)
+  assert_non_null(x)
   if (!all(is.na(x))) {
     stop(sprintf(message, name), call. = FALSE)
   }
@@ -159,7 +159,7 @@ assert_int <- function(x, message = NULL,
     message <- "%s must be integer valued"
   }
 
-  assert_numeric(x, name = name, message = message)
+  assert_numeric(x, name = name)
   if (!isTRUE(all.equal(x, as.integer(x), check.attributes = FALSE))) {
     stop(sprintf(message, name), call. = FALSE)
   }
@@ -180,7 +180,7 @@ assert_pos <- function(x, zero_allowed = TRUE, message = NULL,
     }
   }
 
-  assert_numeric(x, name = name, message = message)
+  assert_numeric(x, name = name)
   if (zero_allowed) {
     if (!all(x >= 0)) {
       stop(sprintf(message, name), call. = FALSE)
@@ -295,9 +295,9 @@ assert_class <- function(x, c, message = NULL,
 #' @noRd
 assert_single <- function(x, message = NULL,
                           name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_non_null(x, name = name, message = message)
-  assert_atomic(x, name = name, message = message)
-  assert_length(x, 1, name = name, message = message)
+  assert_non_null(x, name = name)
+  assert_atomic(x, name = name)
+  assert_length(x, 1, name = name)
   return(TRUE)
 }
 
@@ -306,8 +306,8 @@ assert_single <- function(x, message = NULL,
 #' @noRd
 assert_single_string <- function(x, message = NULL,
                                  name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_length(x, n = 1, name = name, message = message)
-  assert_string(x, name = name, message = message)
+  assert_length(x, n = 1, name = name)
+  assert_string(x, name = name)
   return(TRUE)
 }
 
@@ -316,8 +316,8 @@ assert_single_string <- function(x, message = NULL,
 #' @noRd
 assert_single_logical <- function(x, message = NULL,
                                   name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_length(x, n = 1, name = name, message = message)
-  assert_logical(x, name = name, message = message)
+  assert_length(x, n = 1, name = name)
+  assert_logical(x, name = name)
   return(TRUE)
 }
 
@@ -326,8 +326,8 @@ assert_single_logical <- function(x, message = NULL,
 #' @noRd
 assert_single_numeric <- function(x, message = NULL,
                                   name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_length(x, n = 1, name = name, message = message)
-  assert_numeric(x, name = name, message = message)
+  assert_length(x, n = 1, name = name)
+  assert_numeric(x, name = name)
   return(TRUE)
 }
 
@@ -336,8 +336,8 @@ assert_single_numeric <- function(x, message = NULL,
 #' @noRd
 assert_single_int <- function(x, message = NULL,
                               name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_length(x, n = 1, name = name, message = message)
-  assert_int(x, name = name, message = message)
+  assert_length(x, n = 1, name = name)
+  assert_int(x, name = name)
   return(TRUE)
 }
 
@@ -346,8 +346,8 @@ assert_single_int <- function(x, message = NULL,
 #' @noRd
 assert_single_pos <- function(x, zero_allowed = TRUE, message = NULL,
                               name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_length(x, n = 1, name = name, message = message)
-  assert_pos(x, zero_allowed = zero_allowed, name = name, message = message)
+  assert_length(x, n = 1, name = name)
+  assert_pos(x, zero_allowed = zero_allowed, name = name)
   return(TRUE)
 }
 
@@ -356,8 +356,8 @@ assert_single_pos <- function(x, zero_allowed = TRUE, message = NULL,
 #' @noRd
 assert_pos_int <- function(x, zero_allowed = TRUE, message = NULL,
                            name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_int(x, name = name, message = message)
-  assert_pos(x, zero_allowed = zero_allowed, name = name, message = message)
+  assert_int(x, name = name)
+  assert_pos(x, zero_allowed = zero_allowed, name = name)
   return(TRUE)
 }
 
@@ -366,8 +366,8 @@ assert_pos_int <- function(x, zero_allowed = TRUE, message = NULL,
 #' @noRd
 assert_single_pos_int <- function(x, zero_allowed = TRUE, message = NULL,
                                   name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_length(x, n = 1, name = name, message = message)
-  assert_pos_int(x, zero_allowed = zero_allowed, name = name, message = message)
+  assert_length(x, n = 1, name = name)
+  assert_pos_int(x, zero_allowed = zero_allowed, name = name)
   return(TRUE)
 }
 
@@ -377,7 +377,7 @@ assert_single_pos_int <- function(x, zero_allowed = TRUE, message = NULL,
 assert_single_bounded <- function(x, left = 0, right = 1, inclusive_left = TRUE, inclusive_right = TRUE,
                                   message = NULL,
                                   name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_length(x, n = 1, name = name, message = message)
+  assert_length(x, n = 1, name = name)
   assert_bounded(x, left = left, right = right,
                  inclusive_left = inclusive_left, inclusive_right = inclusive_right,
                  message = message,
@@ -390,8 +390,8 @@ assert_single_bounded <- function(x, left = 0, right = 1, inclusive_left = TRUE,
 #' @noRd
 assert_vector_numeric <- function(x, message = NULL,
                                   name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_numeric(x, message = message, name = name)
-  assert_vector(x, message = message, name = name)
+  assert_numeric(x, name = name)
+  assert_vector(x, name = name)
   return(TRUE)
 }
 
@@ -400,8 +400,8 @@ assert_vector_numeric <- function(x, message = NULL,
 #' @noRd
 assert_vector_int <- function(x, message = NULL,
                               name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_int(x, message = message, name = name)
-  assert_vector(x, message = message, name = name)
+  assert_int(x, name = name)
+  assert_vector(x, name = name)
   return(TRUE)
 }
 
@@ -411,8 +411,8 @@ assert_vector_int <- function(x, message = NULL,
 assert_vector_pos <- function(x, zero_allowed = TRUE,
                               message = NULL,
                               name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_pos(x, zero_allowed = zero_allowed, name = name, message = message)
-  assert_vector(x, name = name, message = message)
+  assert_pos(x, zero_allowed = zero_allowed, name = name)
+  assert_vector(x, name = name)
   return(TRUE)
 }
 
@@ -422,9 +422,9 @@ assert_vector_pos <- function(x, zero_allowed = TRUE,
 assert_vector_pos_int <- function(x, zero_allowed = TRUE,
                                   message = NULL,
                                   name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_pos(x, zero_allowed = zero_allowed, name = name, message = message)
-  assert_vector(x, name = name, message = message)
-  assert_int(x, name = name, message = message)
+  assert_pos(x, zero_allowed = zero_allowed, name = name)
+  assert_vector(x, name = name)
+  assert_int(x, name = name)
   return(TRUE)
 }
 
@@ -434,7 +434,7 @@ assert_vector_pos_int <- function(x, zero_allowed = TRUE,
 assert_vector_bounded <- function(x, left = 0, right = 1, inclusive_left = TRUE, inclusive_right = TRUE,
                                   message = NULL,
                                   name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_vector(x, name = name, message = message)
+  assert_vector(x, name = name)
   assert_bounded(x, left = left, right = right,
                  inclusive_left = inclusive_left, inclusive_right = inclusive_right,
                  message = message,
@@ -447,8 +447,8 @@ assert_vector_bounded <- function(x, left = 0, right = 1, inclusive_left = TRUE,
 #' @noRd
 assert_vector_string <- function(x, message = NULL,
                                  name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_vector(x, message = message, name = name)
-  assert_string(x, message = message, name = name)
+  assert_vector(x, name = name)
+  assert_string(x, name = name)
   return(TRUE)
 }
 
@@ -457,8 +457,8 @@ assert_vector_string <- function(x, message = NULL,
 #' @noRd
 assert_matrix_numeric <- function(x, message = NULL,
                                   name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_matrix(x, message = message, name = name)
-  assert_numeric(x, message = message, name = name)
+  assert_matrix(x, name = name)
+  assert_numeric(x, name = name)
   return(TRUE)
 }
 
@@ -466,8 +466,8 @@ assert_matrix_numeric <- function(x, message = NULL,
 # x is a named list
 assert_list_named <- function(x, message = NULL,
                               name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_named(x, message = message, name = name)
-  assert_list(x, message = message, name = name)
+  assert_named(x, name = name)
+  assert_list(x, name = name)
   return(TRUE)
 }
 
@@ -475,10 +475,10 @@ assert_list_named <- function(x, message = NULL,
 # x is a plotting limit, i.e. contains two increasing values
 assert_limit <- function(x, message = NULL,
                          name = paste(deparse(substitute(x)), collapse = "")) {
-  assert_vector(x, name = name, message = message)
-  assert_length(x, 2, name = name, message = message)
-  assert_numeric(x, name = name, message = message)
-  assert_increasing(x, name = name, message = message)
+  assert_vector(x, name = name)
+  assert_length(x, 2, name = name)
+  assert_numeric(x, name = name)
+  assert_increasing(x, name = name)
   return(TRUE)
 }
 
@@ -495,9 +495,9 @@ assert_eq <- function(x, y, message = NULL,
     message <- "%s must equal %s"
   }
 
-  assert_non_null(x, name = name_x, message = message)
-  assert_non_null(y, name = name_y, message = message)
-  assert_same_length(x, y, name_x = name_x, name_y = name_y, message = message)
+  assert_non_null(x, name = name_x)
+  assert_non_null(y, name = name_y)
+  assert_same_length(x, y, name_x = name_x, name_y = name_y)
   if (!isTRUE(all.equal(x, y, check.attributes = FALSE))) {
     stop(sprintf(message, name_x, name_y), call. = FALSE)
   }
@@ -514,9 +514,9 @@ assert_neq <- function(x, y, message = NULL,
     message <- "%s cannot equal %s"
   }
 
-  assert_non_null(x, name = name_x, message = message)
-  assert_non_null(y, name = name_y, message = message)
-  assert_same_length(x, y, name_x = name_x, name_y = name_y, message = message)
+  assert_non_null(x, name = name_x)
+  assert_non_null(y, name = name_y)
+  assert_same_length(x, y, name_x = name_x, name_y = name_y)
   if (any(x == y)) {
     stop(sprintf(message, name_x, name_y), call. = FALSE)
   }
@@ -534,9 +534,9 @@ assert_gr <- function(x, y, message = NULL,
     message <- "%s must be greater than %s"
   }
 
-  assert_numeric(x, name = name_x, message = message)
-  assert_numeric(y, name = name_y, message = message)
-  assert_in(length(y), c(1, length(x)), message = message)
+  assert_numeric(x, name = name_x)
+  assert_numeric(y, name = name_y)
+  assert_in(length(y), c(1, length(x)))
   if (!all(x > y)) {
     stop(sprintf(message, name_x, name_y), call. = FALSE)
   }
@@ -554,9 +554,9 @@ assert_greq <- function(x, y, message = NULL,
     message <- "%s must be greater than or equal to %s"
   }
 
-  assert_numeric(x, name = name_x, message = message)
-  assert_numeric(y, name = name_y, message = message)
-  assert_in(length(y), c(1, length(x)), message = message)
+  assert_numeric(x, name = name_x)
+  assert_numeric(y, name = name_y)
+  assert_in(length(y), c(1, length(x)))
   if (!all(x >= y)) {
     stop(sprintf(message, name_x, name_y), call. = FALSE)
   }
@@ -574,9 +574,9 @@ assert_le <- function(x, y, message = NULL,
     message <- "%s must be less than %s"
   }
 
-  assert_numeric(x, name = name_x, message = message)
-  assert_numeric(y, name = name_y, message = message)
-  assert_in(length(y), c(1, length(x)), message = message)
+  assert_numeric(x, name = name_x)
+  assert_numeric(y, name = name_y)
+  assert_in(length(y), c(1, length(x)))
   if (!all(x < y)) {
     stop(sprintf(message, name_x, name_y), call. = FALSE)
   }
@@ -594,9 +594,9 @@ assert_leq <- function(x, y, message = NULL,
     message <- "%s must be less than or equal to %s"
   }
 
-  assert_numeric(x, name = name_x, message = message)
-  assert_numeric(y, name = name_y, message = message)
-  assert_in(length(y), c(1, length(x)), message = message)
+  assert_numeric(x, name = name_x)
+  assert_numeric(y, name = name_y)
+  assert_in(length(y), c(1, length(x)))
   if (!all(x <= y)) {
     stop(sprintf(message, name_x, name_y), call. = FALSE)
   }
@@ -611,14 +611,14 @@ assert_bounded <- function(x, left = 0, right = 1, inclusive_left = TRUE, inclus
                            name = paste(deparse(substitute(x)), collapse = "")) {
 
   if (inclusive_left) {
-    assert_greq(x, left, message = message, name_x = name)
+    assert_greq(x, left, name_x = name)
   } else {
-    assert_gr(x, left, message = message, name_x = name)
+    assert_gr(x, left, name_x = name)
   }
   if (inclusive_right) {
-    assert_leq(x, right, message = message, name_x = name)
+    assert_leq(x, right, name_x = name)
   } else {
-    assert_le(x, right, message = message, name_x = name)
+    assert_le(x, right, name_x = name)
   }
   return(TRUE)
 }
@@ -633,8 +633,8 @@ assert_in <- function(x, y, message = NULL,
     message <- "all %s must be in %s"
   }
 
-  assert_non_null(x, name = name_x, message = message)
-  assert_non_null(y, name = name_y, message = message)
+  assert_non_null(x, name = name_x)
+  assert_non_null(y, name = name_y)
   if (!all(x %in% y)) {
     stop(sprintf(message, name_x, name_y), call. = FALSE)
   }
@@ -651,8 +651,8 @@ assert_not_in <- function(x, y, message = NULL,
     message <- "none of %s can be in %s"
   }
 
-  assert_non_null(x, name = name_x, message = message)
-  assert_non_null(y, name = name_y, message = message)
+  assert_non_null(x, name = name_x)
+  assert_non_null(y, name = name_y)
   if (any(x %in% y)) {
     stop(sprintf(message, name_x, name_y), call. = FALSE)
   }
@@ -672,7 +672,7 @@ assert_length <- function(x, n, message = NULL,
     message <- "%s must be of length %s"
   }
 
-  assert_pos_int(n, message = message, name = name)
+  assert_pos_int(n, name = name)
   if (length(x) != n[1]) {
     stop(sprintf(message, name, n), call. = FALSE)
   }
@@ -738,7 +738,7 @@ assert_nrow <- function(x, n, message = NULL,
     message <- "%s must have %s rows"
   }
 
-  assert_2d(x, name = name, message = message)
+  assert_2d(x, name = name)
   if (nrow(x) != n) {
     stop(sprintf(message, name, n), call. = FALSE)
   }
@@ -755,7 +755,7 @@ assert_ncol <- function(x, n, message = NULL,
     message <- "%s must have %s cols"
   }
 
-  assert_2d(x, name = name, message = message)
+  assert_2d(x, name = name)
   if (ncol(x) != n) {
     stop(sprintf(message, name, n), call. = FALSE)
   }
@@ -771,10 +771,10 @@ assert_dim <- function(x, y, message = NULL,
   if (is.null(message)) {
     message <- "%s must have %s rows and %s columns"
   }
-
-  assert_2d(x, name = name, message = message)
-  assert_pos_int(y, name = name, message = message)
-  assert_length(y, 2, name = name, message = message)
+  
+  assert_2d(x, name = name)
+  assert_pos_int(y, name = name)
+  assert_length(y, 2, name = name)
   if (nrow(x) != y[1] | ncol(x) != y[2]) {
     stop(sprintf(message, name, y[1], y[2]), call. = FALSE)
   }
@@ -790,8 +790,8 @@ assert_square_matrix <- function(x, message = NULL,
   if (is.null(message)) {
     message <- "%s must be a square matrix"
   }
-
-  assert_matrix(x, name = name, message = message)
+  
+  assert_matrix(x, name = name)
   if (nrow(x) != ncol(x)) {
     stop(sprintf(message, name), call. = FALSE)
   }
@@ -808,7 +808,7 @@ assert_symmetric_matrix <- function(x, message = NULL,
     message <- "%s must be a symmetric matrix"
   }
 
-  assert_square_matrix(x, name = name, message = message)
+  assert_square_matrix(x, name = name)
   if (!isSymmetric(x)) {
     stop(sprintf(message, name), call. = FALSE)
   }
@@ -843,7 +843,7 @@ assert_file_exists <- function(x, message = NULL,
     message <- "%s must be a string defining a file that exists at that path"
   }
   
-  assert_single_string(x, name = name, message = message)
+  assert_single_string(x, name = name)
   if (!file.exists(x)) {
     stop(sprintf(message, name), call. = FALSE)
   }
@@ -860,8 +860,8 @@ assert_increasing <- function(x, message = NULL,
     message <- "%s must be increasing"
   }
   
-  assert_non_null(x, name = name, message = message)
-  assert_numeric(x, name = name, message = message)
+  assert_non_null(x, name = name)
+  assert_numeric(x, name = name)
   if (!isTRUE(all.equal(x, sort(x)))) {
     stop(sprintf(message, name), call. = FALSE)
   }
@@ -878,8 +878,8 @@ assert_decreasing <- function(x, message = NULL,
     message <- "%s must be decreasing"
   }
   
-  assert_non_null(x, name = name, message = message)
-  assert_numeric(x, name = name, message = message)
+  assert_non_null(x, name = name)
+  assert_numeric(x, name = name)
   if (!isTRUE(all.equal(x, sort(x, decreasing = TRUE)))) {
     stop(sprintf(message, name), call. = FALSE)
   }

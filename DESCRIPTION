@@ -1,11 +1,14 @@
 Package: versioncontrol
 Type: Package
-Title: What the Package Does (Title Case)
+Title: A series of version controlled scripts used over various projects
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Authors@R: as.person(c(
+    "Bob Verity <r.verity@imperial.ac.uk> [aut, cre]"
+  ))
+Description: Every time I make a change to a script I update the version number
+    at the end of the script. This should mean that projects can use the most 
+    up-to-date version of my functions, while at the same time it is possible 
+    to trace exactly where a version controlled script came from came from.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -17,3 +20,4 @@ Imports:
     Rcpp
 LinkingTo: 
     Rcpp
+SystemRequirements: C++11
