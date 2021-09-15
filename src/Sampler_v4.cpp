@@ -1,6 +1,6 @@
 
 #include "Sampler_v4.h"
-#include "misc_v10.h"
+#include "misc_v11.h"
 #include "probability_v11.h"
 
 using namespace std;

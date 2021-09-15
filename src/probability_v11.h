@@ -34,6 +34,18 @@ void rmnorm1(std::vector<double> &x, const std::vector<double> &mu,
              const std::vector<std::vector<double>> &sigma_chol, double scale = 1.0);
 
 //------------------------------------------------
+double dinvwish1(const std::vector<std::vector<double>> &sigma_inv,
+                 const std::vector<std::vector<double>> &sigma_chol,
+                 const std::vector<std::vector<double>> &psi,
+                 const std::vector<std::vector<double>> &psi_chol,
+                 double nu);
+
+//------------------------------------------------
+double dinvwish2(const std::vector<std::vector<double>> &sigma,
+                 const std::vector<std::vector<double>> &psi,
+                 double nu);
+
+//------------------------------------------------
 template<class TYPE>
 void reshuffle(std::vector<TYPE> &x) {
   int rnd1;

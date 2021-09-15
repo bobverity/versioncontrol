@@ -1,6 +1,6 @@
 
 #include "probability_v11.h"
-#include "misc_v10.h"
+#include "misc_v11.h"
 
 using namespace std;
 
@@ -162,6 +162,59 @@ void rmnorm1(std::vector<double> &x, const std::vector<double> &mu,
       x[i] += sigma_chol[i][j]*scale*z;
     }
   }
+}
+
+//------------------------------------------------
+// density of inverse Wishart distribution on matrix sigma given scale matrix
+// psi and degrees pf freedom nu. Sigma and psi are input pre-transformed to
+// save time when running this function many times with the same inputs.
+// sigma_inv is the inverse of sigma. sigma_chol and psi_chol are the Cholesky
+// decompositions of sigma and psi, respectively.
+double dinvwish1(const vector<vector<double>> &sigma_inv,
+                 const vector<vector<double>> &sigma_chol,
+                 const vector<vector<double>> &psi,
+                 const vector<vector<double>> &psi_chol,
+                 double nu) {
+  
+  // get basic properties
+  int d = sigma_inv.size();
+  
+  // get matrix determinants
+  double sigma_logdet = log_determinant(sigma_chol);
+  double psi_logdet = log_determinant(psi_chol);
+  
+  // calculate probability density
+  double ret = 0.5*nu*psi_logdet - 0.5*nu*d*log(2.0) - lmvgamma_func(0.5*nu, d) - 0.5*(nu + d + 1)*sigma_logdet;
+  for (int i = 0; i < d; i++) {
+    for (int j = 0; j < d; j++) {
+      ret -= 0.5 * psi[i][j] * sigma_inv[i][j];
+    }
+  }
+  
+  return ret;
+}
+
+//------------------------------------------------
+// equivalent to dinvwish1, but computes inverse and Cholesky decomposition
+// matrices internally rather than as inputs. More convenient in terms of
+// inputs, but less efficient if the same input matrices will be used a large
+// number of times.
+double dinvwish2(const vector<vector<double>> &sigma,
+                 const vector<vector<double>> &psi,
+                 double nu) {
+  
+  // get basic properties
+  int d = sigma.size();
+  
+  // get matrix inverses and cholesky decompositions
+  vector<vector<double>> sigma_inv = inverse(sigma);
+  vector<vector<double>> sigma_chol(d, vector<double>(d));
+  vector<vector<double>> psi_chol(d, vector<double>(d));
+  cholesky(sigma_chol, sigma);
+  cholesky(psi_chol, psi);
+  
+  // calculate and return
+  return dinvwish1(sigma_inv, sigma_chol, psi, psi_chol, nu);
 }
 
 //------------------------------------------------
