@@ -7,12 +7,12 @@ using namespace std;
 
 Rcpp::List dummy1_cpp(Rcpp::List args) {
   
+  vector<double> x = rcpp_to_vector_double(args["x"]);
+  vector<double> mu = rcpp_to_vector_double(args["mu"]);
   vector<vector<double>> sigma = rcpp_to_matrix_double(args["sigma"]);
-  vector<vector<double>> psi = rcpp_to_matrix_double(args["psi"]);
-  double nu = rcpp_to_double(args["nu"]);
   
-  double d1 = dinvwish2(sigma, psi, nu);
-  print(d1);
+  double z = dmnorm2(x, mu, sigma);
+  print(z);
   
   return Rcpp::List::create(Rcpp::Named("foo") = -9);
 }

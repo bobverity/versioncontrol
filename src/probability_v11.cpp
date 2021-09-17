@@ -165,8 +165,53 @@ void rmnorm1(std::vector<double> &x, const std::vector<double> &mu,
 }
 
 //------------------------------------------------
+// density of multivariate normal distribution given mean vector mu, double
+// logdet, and matrix chol_inverse. logdet is the logarithm of the determinant
+// of the covariance matrix, chol_inverse is the inverse of the Cholesky
+// decomposition of the covariance matrix.
+double dmnorm1(const vector<double> &x,
+               const vector<double> &mu,
+               double logdet,
+               const vector< vector<double> > &chol_inverse) {
+  
+  int d = int(x.size());
+  double ret = -0.5*d*log(2*M_PI) - 0.5*logdet;
+  double tmp;
+  for (int i = 0; i < d; i++) {
+    tmp = 0;
+    for (int j = 0; j < (i + 1); j++) {
+      tmp += (x[j] - mu[j]) * chol_inverse[i][j];
+    }
+    ret += -0.5*tmp*tmp;
+  }
+  
+  return ret;
+}
+
+//------------------------------------------------
+// equivalent to dmnorm1, but computes determinants etc. internally rather than
+// as inputs. More convenient in terms of inputs, but less efficient if the same
+// input matrices will be used a large number of times.
+double dmnorm2(const vector<double> &x,
+               const vector<double> &mu,
+               const vector<vector<double>> &sigma) {
+  
+  // calculate determinants etc.
+  int d = int(x.size());
+  vector<vector<double>> sigma_chol(d, vector<double>(d));
+  cholesky(sigma_chol, sigma);
+  double logdet = log_determinant(sigma_chol);
+  vector<vector<double>> sigma_chol_inverse = inverse(sigma_chol);
+  
+  // run dmnorm1 function
+  double ret = dmnorm1(x, mu, logdet, sigma_chol_inverse);
+  
+  return ret;
+}
+
+//------------------------------------------------
 // density of inverse Wishart distribution on matrix sigma given scale matrix
-// psi and degrees pf freedom nu. Sigma and psi are input pre-transformed to
+// psi and degrees of freedom nu. Sigma and psi are input pre-transformed to
 // save time when running this function many times with the same inputs.
 // sigma_inv is the inverse of sigma. sigma_chol and psi_chol are the Cholesky
 // decompositions of sigma and psi, respectively.
