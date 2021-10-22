@@ -452,6 +452,22 @@ assert_single_bounded <- function(x, left = 0, right = 1, inclusive_left = TRUE,
 }
 
 #------------------------------------------------
+# x is a logical (boolean) vector
+#' @noRd
+assert_vector_logical <- function(x, message = NULL,
+                                  name = paste(deparse(substitute(x)), collapse = "")) {
+  
+  # default message
+  if (is.null(message)) {
+    message <- sprintf("%s must be a boolean vector", name)
+  }
+  
+  assert_logical(x, name = name, message = message)
+  assert_vector(x, name = name, message = message)
+  return(TRUE)
+}
+
+#------------------------------------------------
 # x is a numeric vector
 #' @noRd
 assert_vector_numeric <- function(x, message = NULL,
