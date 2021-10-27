@@ -1,5 +1,5 @@
 
-#include "probability_v11.h"
+#include "probability_v13.h"
 #include "misc_v11.h"
 
 using namespace std;
@@ -65,17 +65,41 @@ int rbinom1(int N, double p) {
 std::vector<int> rmultinom1(int N, const std::vector<double> &p, double p_sum) {
   int k = int(p.size());
   std::vector<int> ret(k);
-  for (int i = 0; i < (k-1); ++i) {
-    ret[i] = rbinom1(N, p[i]/p_sum);
+  for (int i = 0; i < (k - 1); ++i) {
+    if (p[i] >= p_sum) {
+      ret[i] = N;
+    } else {
+      ret[i] = rbinom1(N, p[i] / p_sum);
+    }
     N -= ret[i];
     if (N == 0) {
       break;
     }
     p_sum -= p[i];
   }
-  ret[k-1] = N;
+  ret[k - 1] = N;
   return ret;
 }
+
+//------------------------------------------------
+// draw from hypergeometric distribution. Follows the parameterisation in base
+// R, in which k balls are drawn from an urn containing m white balls and n
+// black balls. Returns the number of white balls observed.
+#ifdef RCPP_ACTIVE
+int rhyper1(int m, int n, int k) {
+  return R::rhyper(m, n, k);
+}
+#endif
+
+//------------------------------------------------
+// density of hypergeometric distribution. Follows the parameterisation in base
+// R, in which k balls are drawn from an urn containing m white balls and n
+// black balls. Returns the probability of seeing x white balls.
+#ifdef RCPP_ACTIVE
+double dhyper1(double x, int m, int n, int k, bool return_log) {
+  return R::dhyper(x, m, n, k, return_log);
+}
+#endif
 
 //------------------------------------------------
 // get density of multinomial(x,p) distribution, where x sums to x_sum and p
@@ -84,8 +108,8 @@ std::vector<int> rmultinom1(int N, const std::vector<double> &p, double p_sum) {
 double dmultinom1(const std::vector<int> &x, int x_sum, const std::vector<double> &p, double p_sum) {
   int k = int(p.size());
   double ret = 0;
-  for (int i = 0; i < (k-1); ++i) {
-    ret += R::dbinom(x[i], x_sum, p[i]/p_sum, true);
+  for (int i = 0; i < (k - 1); ++i) {
+    ret += R::dbinom(x[i], x_sum, p[i] / p_sum, true);
     x_sum -= x[i];
     p_sum -= p[i];
   }
@@ -274,7 +298,7 @@ double dinvwish2(const vector<vector<double>> &sigma,
 int sample1(const std::vector<double> &p, double p_sum) {
   double rand = p_sum*runif_0_1();
   double z = 0;
-  for (int i=0; i<int(p.size()); i++) {
+  for (int i = 0; i < int(p.size()); i++) {
     z += p[i];
     if (rand < z) {
       return i;
@@ -288,9 +312,9 @@ int sample1(const std::vector<double> &p, double p_sum) {
   return 0;
 }
 int sample1(const std::vector<int> &p, int p_sum) {
-  int rand = sample2(1,p_sum);
+  int rand = sample2(1, p_sum);
   int z = 0;
-  for (int i=0; i<int(p.size()); i++) {
+  for (int i = 0; i < int(p.size()); i++) {
     z += p[i];
     if (rand <= z) {
       return i;
@@ -320,9 +344,9 @@ void sample3(std::vector<int> &ret, const std::vector<double> &p, double p_sum, 
   int n = int(ret.size());
   int j = 0;
   for (int i = 0; i < int(p.size()); ++i) {
-    int n_i = rbinom1(n, p[i]/p_sum);
+    int n_i = rbinom1(n, p[i] / p_sum);
     if (n_i > 0) {
-      fill(ret.begin()+j, ret.begin()+j+n_i, i);
+      fill(ret.begin() + j, ret.begin() + j + n_i, i);
       j += n_i;
       n -= n_i;
       if (n == 0) {
@@ -346,7 +370,7 @@ std::vector<int> sample4(int n, int a, int b) {
     Rcpp::stop("error in sample4(), attempt to sample more elements than are available");
   }
   for (int i = 0; i < N; ++i) {
-    if (sample2(1, N-t) <= (n-m)) {
+    if (sample2(1, N - t) <= (n - m)) {
       ret[m] = a + i;
       m++;
       if (m == n) {
@@ -373,7 +397,7 @@ double rgamma1(double shape, double rate) {
   if (x == 0) {
     x = UNDERFLO_DOUBLE;
   }
-  if ((1.0/x) == 0) {
+  if ((1.0 / x) == 0) {
     x = 1.0/UNDERFLO_DOUBLE;
   }
 
@@ -431,7 +455,7 @@ double dpois1(int n, double lambda, bool return_log) {
 }
 #else
 double dpois1(int n, double lambda, bool return_log) {
-  double ret = n*log(lambda) - lambda - lgamma(n+1);
+  double ret = n*log(lambda) - lambda - lgamma(n + 1);
   if (!return_log) {
     ret = exp(ret);
   }
@@ -444,11 +468,11 @@ double dpois1(int n, double lambda, bool return_log) {
 std::vector<double> rdirichlet1(double alpha, int n) {
   std::vector<double> ret(n);
   double retSum = 0;
-  for (int i=0; i<n; i++) {
-    ret[i] = rgamma1(alpha,1.0);
+  for (int i = 0; i < n; i++) {
+    ret[i] = rgamma1(alpha, 1.0);
     retSum += ret[i];
   }
-  for (int i=0; i<n; i++) {
+  for (int i = 0; i < n; i++) {
     ret[i] /= retSum;
   }
   return ret;
@@ -471,7 +495,7 @@ int rgeom1(const double p) {
 // draw from exponential(r) distribution
 #ifdef RCPP_ACTIVE
 double rexp1(const double r) {
-  return R::rexp(1/r);
+  return R::rexp(1 / r);
 }
 #else
 double rexp1(const double r) {
@@ -483,11 +507,11 @@ double rexp1(const double r) {
 //------------------------------------------------
 // binomial coeffiient n choose k
 int choose(int n, int k) {
-  return int(exp(lgamma(n+1) - lgamma(n-k+1) - lgamma(k+1)));
+  return int(exp(lgamma(n + 1) - lgamma(n - k + 1) - lgamma(k + 1)));
 }
 
 //------------------------------------------------
 // binomial coeffiient n choose k, returned in log space
 double lchoose(int n, int k) {
-  return lgamma(n+1) - lgamma(n-k+1) - lgamma(k+1);
+  return lgamma(n + 1) - lgamma(n - k + 1) - lgamma(k + 1);
 }

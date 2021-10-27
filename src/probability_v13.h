@@ -21,6 +21,12 @@ int rbinom1(int N, double p);
 std::vector<int> rmultinom1(int N, const std::vector<double> &p, double p_sum = 1.0);
 
 //------------------------------------------------
+int rhyper1(int m, int n, int k);
+
+//------------------------------------------------
+double dhyper1(double x, int m, int n, int k, bool return_log = true);
+
+//------------------------------------------------
 double rnorm1(double mean = 0.0, double sd = 1.0);
 
 //------------------------------------------------
