@@ -51,7 +51,11 @@ bool rbernoulli1(double p) {
 // draw from binomial(N,p) distribution
 #ifdef RCPP_ACTIVE
 int rbinom1(int N, double p) {
-  return R::rbinom(N, p);
+  int ret = N;
+  if (p < 1) {
+    ret = R::rbinom(N, p);
+  }
+  return ret;
 }
 #else
 int rbinom1(int N, double p) {
@@ -66,11 +70,7 @@ std::vector<int> rmultinom1(int N, const std::vector<double> &p, double p_sum) {
   int k = int(p.size());
   std::vector<int> ret(k);
   for (int i = 0; i < (k - 1); ++i) {
-    if (p[i] >= p_sum) {
-      ret[i] = N;
-    } else {
-      ret[i] = rbinom1(N, p[i] / p_sum);
-    }
+    ret[i] = rbinom1(N, p[i] / p_sum);
     N -= ret[i];
     if (N == 0) {
       break;
