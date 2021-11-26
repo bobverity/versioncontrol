@@ -82,6 +82,7 @@ void reshuffle(std::vector<TYPE> &x) {
 
 //------------------------------------------------
 int sample1(const std::vector<double> &p, double p_sum = 1.0);
+int sample1(const std::vector<int> &p, int p_sum);
 
 //------------------------------------------------
 int sample2(int a, int b);
