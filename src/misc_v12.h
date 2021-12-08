@@ -134,6 +134,28 @@ std::vector<int> get_order(const std::vector<TYPE> &v) {
 }
 
 //------------------------------------------------
+// reorder a vector (passed by reference) according to another vector of indices
+template <typename TYPE>
+void apply_order(std::vector<TYPE>& v, const std::vector<int>& order_vec) {
+  
+  std::vector<bool> done(v.size());
+  for (std::size_t i = 0; i < v.size(); ++i) {
+    if (done[i]) {
+      continue;
+    }
+    done[i] = true;
+    std::size_t prev_j = i;
+    std::size_t j = order_vec[i];
+    while (i != j) {
+      std::swap(v[prev_j], v[j]);
+      done[j] = true;
+      prev_j = j;
+      j = order_vec[j];
+    }
+  }
+}
+
+//------------------------------------------------
 // return unique values in a vector
 template<class TYPE>
 std::vector<TYPE> unique(const std::vector<TYPE> &v) {

@@ -109,6 +109,11 @@ vector<int> seq_int(int from, int to, int by) {
 // DEFINED IN HEADER
 
 //------------------------------------------------
+// reorder a vector (passed by reference) according to another vector of indices
+// apply_order
+// DEFINED IN HEADER
+
+//------------------------------------------------
 // return unique values in a vector
 // unique
 // DEFINED IN HEADER
