@@ -145,6 +145,12 @@ test_that("assert_int working correctly", {
 })
 
 #------------------------------------------------
+test_that("assert_cpp_int working correctly", {
+  expect_error(assert_cpp_int(-2147483649))
+  expect_error(assert_cpp_int(2147483648))
+})
+
+#------------------------------------------------
 test_that("assert_single_int working correctly", {
   expect_true(assert_single_int(5))
   expect_true(assert_single_int(-5))
@@ -154,6 +160,12 @@ test_that("assert_single_int working correctly", {
   expect_error(assert_single_int(0.5))
   expect_error(assert_single_int("foo"))
   expect_error(assert_single_int(c(5,"foo")))
+})
+
+#------------------------------------------------
+test_that("assert_single_cpp_int working correctly", {
+  expect_error(assert_single_cpp_int(-2147483649))
+  expect_error(assert_single_cpp_int(2147483648))
 })
 
 #------------------------------------------------
@@ -200,6 +212,11 @@ test_that("assert_pos_int working correctly", {
 })
 
 #------------------------------------------------
+test_that("assert_pos_cpp_int working correctly", {
+  expect_error(assert_pos_cpp_int(2147483648))
+})
+
+#------------------------------------------------
 test_that("assert_single_pos_int working correctly", {
   expect_true(assert_single_pos_int(5))
   expect_true(assert_single_pos_int(0, zero_allowed = TRUE))
@@ -212,6 +229,11 @@ test_that("assert_single_pos_int working correctly", {
   expect_error(assert_single_pos_int(0:5, zero_allowed = FALSE))
   expect_error(assert_single_pos_int(-5:5, zero_allowed = TRUE))
   expect_error(assert_single_pos_int("foo"))
+})
+
+#------------------------------------------------
+test_that("assert_single_pos_cpp_int working correctly", {
+  expect_error(assert_single_pos_cpp_int(2147483648))
 })
 
 #------------------------------------------------
