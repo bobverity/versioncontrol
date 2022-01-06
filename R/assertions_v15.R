@@ -160,7 +160,7 @@ assert_int <- function(x, message = NULL,
   }
 
   assert_numeric(x, name = name)
-  if (!isTRUE(all.equal(x, as.integer(x), check.attributes = FALSE))) {
+  if (!isTRUE(all.equal(x, round(x), check.attributes = FALSE))) {
     stop(message, call. = FALSE)
   }
   return(TRUE)

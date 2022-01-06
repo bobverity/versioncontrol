@@ -136,7 +136,8 @@ test_that("assert_int working correctly", {
   expect_true(assert_int(-5))
   expect_true(assert_int(-5:5))
   expect_true(assert_int(c(a = 5)))
-
+  expect_true(assert_int(1e10))
+  
   expect_error(assert_int(NULL))
   expect_error(assert_int(0.5))
   expect_error(assert_int("foo"))
