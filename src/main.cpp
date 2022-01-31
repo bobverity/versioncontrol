@@ -8,13 +8,10 @@ using namespace std;
 
 Rcpp::List dummy1_cpp(Rcpp::List args) {
   
-  vector<double> x = rcpp_to_vector_double(args["x"]);
-  vector<double> mu = rcpp_to_vector_double(args["mu"]);
-  vector<vector<double>> sigma = rcpp_to_matrix_double(args["sigma"]);
+  int n = rcpp_to_int(args["n"]);
+  double alpha = rcpp_to_double(args["alpha"]);
+  vector<double> z = rdirichlet1(alpha, n);
   
-  double z = dmnorm2(x, mu, sigma);
-  print(z);
-  
-  return Rcpp::List::create(Rcpp::Named("foo") = -9);
+  return Rcpp::List::create(Rcpp::Named("z") = z);
 }
 

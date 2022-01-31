@@ -473,7 +473,7 @@ std::vector<double> rdirichlet1(double alpha, int n) {
   for (int i = 0; i < (n - 1); ++i) {
     double x = rbeta1(alpha, (n - 1 - i)*alpha);
     ret[i] = stick_remaining * x;
-    stick_remaining -= x;
+    stick_remaining -= ret[i];
     if (stick_remaining <= 0) {
       stick_remaining = 0;
       break;
