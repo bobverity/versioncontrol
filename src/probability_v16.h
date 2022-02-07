@@ -113,6 +113,9 @@ double dpois1(int n, double lambda, bool return_log);
 std::vector<double> rdirichlet1(double alpha, int n);
 
 //------------------------------------------------
+std::vector<double> rdirichlet2(std::vector<double> &alpha);
+
+//------------------------------------------------
 int rgeom1(const double p);
 
 //------------------------------------------------

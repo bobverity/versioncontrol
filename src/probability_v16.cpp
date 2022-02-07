@@ -1,5 +1,5 @@
 
-#include "probability_v14.h"
+#include "probability_v16.h"
 #include "misc_v12.h"
 
 using namespace std;
@@ -472,6 +472,28 @@ std::vector<double> rdirichlet1(double alpha, int n) {
   double stick_remaining = 1.0;
   for (int i = 0; i < (n - 1); ++i) {
     double x = rbeta1(alpha, (n - 1 - i)*alpha);
+    ret[i] = stick_remaining * x;
+    stick_remaining -= ret[i];
+    if (stick_remaining <= 0) {
+      stick_remaining = 0;
+      break;
+    }
+  }
+  ret[n - 1] = stick_remaining;
+  return ret;
+}
+
+//------------------------------------------------
+// draw from potentially asymmetric dichlet distribution given vector of shape
+// parameters
+std::vector<double> rdirichlet2(vector<double> &alpha) {
+  int n = alpha.size();
+  double sum_alpha = sum(alpha);
+  std::vector<double> ret(n);
+  double stick_remaining = 1.0;
+  for (int i = 0; i < (n - 1); ++i) {
+    sum_alpha -= alpha[i];
+    double x = rbeta1(alpha[i], sum_alpha);
     ret[i] = stick_remaining * x;
     stick_remaining -= ret[i];
     if (stick_remaining <= 0) {
