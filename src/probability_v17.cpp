@@ -1,5 +1,5 @@
 
-#include "probability_v16.h"
+#include "probability_v17.h"
 #include "misc_v12.h"
 
 using namespace std;
@@ -405,6 +405,11 @@ double rgamma1(double shape, double rate) {
 }
 #endif
 
+//------------------------------------------------
+// density of gamma(shape,rate) distribution
+double dgamma1(double x, double shape, double rate, bool return_log) {
+  return(R::dgamma(x, shape, 1.0 / rate, return_log));
+}
 
 //------------------------------------------------
 // draw from beta(shape1,shape2) distribution
@@ -419,6 +424,12 @@ double rbeta1(double shape1, double shape2) {
   return x1/double(x1+x2);
 }
 #endif
+
+//------------------------------------------------
+// density of beta(shape1,shape2) distribution
+double dbeta1(double x, double shape1, double shape2, bool return_log) {
+  return R::dbeta(x, shape1, shape2, return_log);
+}
 
 //------------------------------------------------
 // draw from Poisson distribution with rate lambda
