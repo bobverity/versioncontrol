@@ -77,6 +77,23 @@ log_sum <- function(x) {
 }
 
 #------------------------------------------------
+# improved version of log_sum() that gives higher accuracy (less sensitive to
+# underflow) in situations when the largest value of x is 0, and the second
+# largest value is much more negative. For example, log_sum(c(0, -40)) returns
+# 0, whereas log_sum2(c(0, -40)) returns a small positive value.
+#' @noRd
+log_sum2 <- function(x) {
+  if (all(is.na(x))) {
+    return(rep(NA, length(x)))
+  }
+  w <- which.max(x)
+  if ((x[w] == 0) && (max(x[-w]) < -36)) {
+    ret <- sum(exp(x[-w] - x[w]))
+  }
+  return(ret)
+}
+
+#------------------------------------------------
 # geweke_pvalue
 # return p-value of Geweke's diagnostic convergence statistic, estimated from
 # package coda
