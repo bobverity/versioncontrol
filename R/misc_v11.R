@@ -89,6 +89,8 @@ log_sum2 <- function(x) {
   w <- which.max(x)
   if ((x[w] == 0) && (max(x[-w]) < -36)) {
     ret <- sum(exp(x[-w] - x[w]))
+  } else {
+    ret <- log_sum(x)
   }
   return(ret)
 }
