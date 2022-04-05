@@ -65,33 +65,217 @@ quantile_95 <- function(x) {
 }
 
 #------------------------------------------------
-# sum logged values without underflow, i.e. do log(sum(exp(x)))
+# deal with possible NAs in the object x, which can be any object type that
+# accommodates is.na() calls. For example, vectors and matrices are fine, but
+# for lists it will only evaluate at the top level.
+# Includes the following return options:
+#   1 = stop() if all NA, otherwise return FALSE
+#   2 = return TRUE if all NA, otherwise return FALSE
+#   3 = stop() if any NA, otherwise return FALSE
+#   4 = return TRUE if any NA, otherwise return FALSE
 #' @noRd
-log_sum <- function(x) {
+process_NAs <- function(x, na_option = 3) {
+  
   if (all(is.na(x))) {
-    return(rep(NA, length(x)))
+    if (na_option == 1) {
+      stop("x cannot contain all NAs")
+    } else if (na_option == 2) {
+      return(TRUE)
+    }
   }
-  x_max <- max(x, na.rm = TRUE)
+  if (any(is.na(x))) {
+    if (na_option == 3) {
+      stop("x cannot contain any NAs")
+    } else if (na_option == 4) {
+      return(TRUE)
+    }
+  }
+  return(FALSE)
+}
+
+#------------------------------------------------
+# sum values in log space, i.e. do log(sum(exp(x))), while avoiding some
+# underflow/overflow issues. Robust to large +ve and large -ve values, including
+# allowing -Inf values as long as there is at least one finite value in x.
+# Includes options for dealing with NA values - see process_NAs().
+#' @noRd
+log_sum <- function(x, na_option = 3) {
+  
+  # deal with NAs
+  if (process_NAs(x, na_option = na_option)) {
+    return(NA)
+  }
+  
+  # strip NAs if present
+  x <- x[!is.na(x)]
+  
+  # deal with case that x a single value
+  if (length(x) == 1) {
+    return(x)
+  }
+  
+  # deal with infinite edge cases
+  if (any(!is.finite(x) & (x > 0))) {
+    return(Inf)
+  }
+  if (all(!is.finite(x) & (x < 0))) {
+    return(-Inf)
+  }
+  
+  # sum in log space while allowing large +ve and -ve values
+  x_max <- max(x)
   ret <- x_max + log(sum(exp(x - x_max)))
   return(ret)
 }
 
 #------------------------------------------------
-# improved version of log_sum() that gives higher accuracy (less sensitive to
-# underflow) in situations when the largest value of x is 0, and the second
-# largest value is much more negative. For example, log_sum(c(0, -40)) returns
-# 0, whereas log_sum2(c(0, -40)) returns a small positive value.
+# alternative version of log_sum() that allows for small values of x, along with
+# large -ve values used in combination with other values. For example, the
+# following values of x are dealt with more accurately using log_sum2():
+# x <- c(0, -40)  # requires negative_x_correction
+# x <- c(1e-20, -46)  # requires small_x_correction and negative_x_correction
 #' @noRd
-log_sum2 <- function(x) {
-  if (all(is.na(x))) {
-    return(rep(NA, length(x)))
+log_sum2 <- function(x, na_option = 3) {
+  
+  # deal with NAs
+  if (process_NAs(x, na_option = na_option)) {
+    return(NA)
   }
-  w <- which.max(x)
-  if ((x[w] == 0) && (max(x[-w]) < -36)) {
-    ret <- sum(exp(x[-w] - x[w]))
-  } else {
-    ret <- log_sum(x)
+  
+  # strip NAs if present
+  x <- x[!is.na(x)]
+  
+  # deal with case that x a single value
+  if (length(x) == 1) {
+    return(x)
   }
+  
+  # deal with infinite edge cases
+  if (any(!is.finite(x) & (x > 0))) {
+    return(Inf)
+  }
+  if (all(!is.finite(x) & (x < 0))) {
+    return(-Inf)
+  }
+  
+  # if all x are very close to 0 then chain together approximations:
+  # e^x = 1 + x
+  # log(n + x) = log(n) + x / n
+  # to move these values outside the log function
+  if (all((x >= -1e-11) & (x <= 1e-11))) {
+    ret <- log(length(x)) + mean(x)
+    return(ret)
+  }
+  
+  # if any x are close to 0 then use approximation above for these values only.
+  # Results in a modified version of x and a correction factor to be added to
+  # final result
+  small_x_correction <- 0
+  if (any((x >= -1e-11) & (x <= 1e-11))) {
+    w_small <- which((x >= -1e-11) & (x <= 1e-11))
+    small_x_correction <- sum(x[w_small]) / (length(w_small) + sum(exp(x[-w_small])))
+    x <- c(log(length(w_small)), x[-w_small])
+  }
+  
+  # rescale x to be relative to largest value
+  m <- max(x)
+  x <- x - m
+  
+  # if any x are large -ve values then use following approximation:
+  # log(a + sum(exp(x))) = log(a) + sum(exp(x)) / a
+  # Results in a modified version of x and a correction factor to be added to
+  # final result
+  negative_x_correction <- 0
+  if (any(x < -23)) {
+    w_negative <- which(x < -23)
+    negative_x_correction <-  sum(exp(x[w_negative])) / sum(exp(x[-w_negative]))
+    x <- x[-w_negative]
+  }
+  
+  # use naive formula on remaining terms and add in corrections
+  ret <- m + log(sum(exp(x))) + negative_x_correction + small_x_correction
+  return(ret)
+}
+
+#------------------------------------------------
+# take the mean of values in log space, i.e. do log(mean(exp(x))), while
+# avoiding some underflow/overflow issues. Robust to large +ve and large -ve
+# values, including allowing -Inf values as long as there is at least one finite
+# value in x. Includes options for dealing with NA values - see process_NAs().
+#' @noRd
+log_mean <- function(x, na_option = 3) {
+  
+  # deal with NAs
+  if (process_NAs(x, na_option = na_option)) {
+    return(NA)
+  }
+  
+  # strip NAs if present
+  x <- x[!is.na(x)]
+  
+  # deal with case that x a single value
+  if (length(x) == 1) {
+    return(x)
+  }
+  
+  # deal with infinite edge cases
+  if (any(!is.finite(x) & (x > 0))) {
+    return(Inf)
+  }
+  if (all(!is.finite(x) & (x < 0))) {
+    return(-Inf)
+  }
+  
+  # take mean in log space while allowing large +ve and -ve values
+  x_max <- max(x)
+  ret <- x_max + log(sum(exp(x - x_max))) - log(length(x))
+  return(ret)
+}
+
+#------------------------------------------------
+# alternative version of log_mean() that allows for small values of x, along with
+# large -ve values used in combination with other values. For example, the
+# following values of x are dealt with more accurately using log_mean2():
+# x <- rep(1e-20, 3)
+#' @noRd
+log_mean2 <- function(x, na_option = 3) {
+  
+  # deal with NAs
+  if (process_NAs(x, na_option = na_option)) {
+    return(NA)
+  }
+  
+  # strip NAs if present
+  x <- x[!is.na(x)]
+  
+  # deal with case that x a single value
+  n_x <- length(x)
+  if (n_x == 1) {
+    return(x)
+  }
+  
+  # deal with infinite edge cases
+  if (any(!is.finite(x) & (x > 0))) {
+    return(Inf)
+  }
+  if (all(!is.finite(x) & (x < 0))) {
+    return(-Inf)
+  }
+  
+  # if all x are very close to 0 then chain together approximations:
+  # e^x = 1 + x
+  # log(n + x) = log(n) + x / n
+  # leading to simple result of mean of x
+  if (all((x >= -1e-11) & (x <= 1e-11))) {
+    return(mean(x))
+  }
+  
+  # rescale x to be relative to largest value
+  m <- max(x)
+  x <- x - m
+  
+  # use naive formula on remaining terms and add in corrections
+  ret <- m + log(sum(exp(x))) - log(n_x)
   return(ret)
 }
 
