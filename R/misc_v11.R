@@ -280,6 +280,45 @@ log_mean2 <- function(x, na_option = 3) {
 }
 
 #------------------------------------------------
+# evaluates log(1 - exp(x)) for a single -ve value of x, while avoiding some
+# underflow/overflow issues. Robust to reasonable large -ve values of x, up to
+# about -700, and robust to small -ve values of x. Handles -Inf correctly.
+# Includes the following options for dealing with NA values:
+#   1 = stop() if x is NA
+#   2 = return NA if x is NA
+#' @noRd
+log_one_minus <- function(x, na_option = 1) {
+  
+  # check inputs
+  assert_single_pos(-x, zero_allowed = TRUE,
+                    message = "x must be a single negative value or zero")
+  
+  # deal with NAs
+  if (is.na(x)) {
+    if (na_option == 1) {
+      stop("x cannot be NA")
+    } else {
+      return(NA)
+    }
+  }
+  
+  # for x large -ve value, use approximation:
+  # log(1 - exp(x)) = -exp(x)
+  if (x < -23) {
+    return(-exp(x))
+  }
+  
+  # for x small -ve value, use approximation:
+  # exp(x) = 1 + x
+  # log(1 - exp(x)) = log(-x)
+  if (x > -1e-10) {
+    return(log(-x))
+  }
+  
+  return(log(1 - exp(x)))
+}
+
+#------------------------------------------------
 # geweke_pvalue
 # return p-value of Geweke's diagnostic convergence statistic, estimated from
 # package coda
